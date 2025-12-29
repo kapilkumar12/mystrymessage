@@ -10,13 +10,6 @@ export async function sendVerificationEmail(
     verifyCode:string
 ): Promise<ApiResponse> {
 
-   try {
-    const r = await fetch("https://api.resend.com");
-    console.log("PING STATUS:", r.status);
-  } catch (e) {
-    console.error("PING FAILED:", e);
-  }
-
     try {
 
 const html = await render(
