@@ -58,7 +58,7 @@ try {
           success: true,
           message: "Username is unique",
         },
-        { status: 400 }
+        { status: 200 }
       );
 
     

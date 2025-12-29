@@ -10,19 +10,34 @@ export async function sendVerificationEmail(
     verifyCode:string
 ): Promise<ApiResponse> {
 
+   try {
+    const r = await fetch("https://api.resend.com");
+    console.log("PING STATUS:", r.status);
+  } catch (e) {
+    console.error("PING FAILED:", e);
+  }
+
     try {
 
 const html = await render(
       <VerificationEmail username={username} otp={verifyCode} />
     );
         
-    const data = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',
-      to:email,
+      to:[email],
       subject: 'Mystry Message | Verification email',
       html,
     });
     console.log("RESEND EMAIL RESPONSE:", data);
+
+    if (error) {
+  console.error("RESEND ERROR:", error);
+  return {
+    success: false,
+    message: error.message
+  };
+}
 
         return {
         success:true,

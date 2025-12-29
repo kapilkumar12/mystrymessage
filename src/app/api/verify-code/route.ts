@@ -3,30 +3,18 @@ import UserModel from "@/model/User";
 import { verifySchema } from "@/schemas/verifySchema";
 import { ZodError } from "zod";
 
-export async function POST(request:Request) {
+export async function POST(request: Request) {
+  await dbConnect();
 
-await dbConnect();
+  try {
+    const body = await request.json();
 
-try {
+    // ✅ username + code validate
+    const { username, code } = verifySchema.parse(body);
 
-const body = await request.json();
-const { code } = verifySchema.parse(body);
-const {searchParams} = new URL(request.url);
-const email = searchParams.get("email");
+    const user = await UserModel.findOne({ username });
 
-
-if(!email){
-    return Response.json(
-      {
-        success: false,
-        message: "Email is required for verification",
-      }, { status: 400 }  
-    )
-}
-
-const user = await UserModel.findOne({email});
-
-if (!user) {
+    if (!user) {
       return Response.json(
         { success: false, message: "User not found" },
         { status: 404 }
@@ -54,6 +42,7 @@ if (!user) {
       );
     }
 
+    // ✅ success
     user.isVerified = true;
     user.verifyCode = undefined;
     user.verifyCodeExpiry = undefined;
@@ -61,27 +50,22 @@ if (!user) {
     await user.save();
 
     return Response.json(
-  { success: true, message: "Email verified successfully" },
-  { status: 200 }
-);
+      { success: true, message: "Account verified successfully" },
+      { status: 200 }
+    );
 
   } catch (error) {
     if (error instanceof ZodError) {
       return Response.json(
-        {
-          success: false,
-          message: error.issues[0]?.message ?? "Invalid input",
-        },
+        { success: false, message: error.issues[0]?.message },
         { status: 400 }
       );
     }
 
-    console.error("Verify email error:", error);
+    console.error("Verify error:", error);
     return Response.json(
-      { success: false, message: "Failed to verify email" },
+      { success: false, message: "Verification failed" },
       { status: 500 }
     );
-}
-
-
+  }
 }
