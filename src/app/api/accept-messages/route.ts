@@ -3,12 +3,13 @@ import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import {User} from "next-auth"
+import { acceptMessagesSchema } from "@/schemas/acceptMessagesSchema";
 
 export async function POST(request: Request) {
     await dbConnect();
 
-    const session = await getServerSession(authOptions);
-   const user:User =  session?.user as User;
+   const session = await getServerSession(authOptions);
+   const user = session?.user as { _id: string };
    
    if (!session || !session.user) {
     return Response.json(
@@ -18,9 +19,19 @@ export async function POST(request: Request) {
    }
 
    const userId = user._id;
-   const { acceptMessages } = await request.json();
+   const body = await request.json();
+   const parsed = acceptMessagesSchema.safeParse(body);
+
+   if (!parsed.success) {
+    return Response.json(
+      { success: false, message: "Invalid request body" },
+      { status: 400 }
+    );
+  }
+ const { acceptMessages } = parsed.data;
+
    try {
-   const updateUser = await UserModel.findByIdAndUpdate(userId, { acceptMessages: acceptMessages }, { new: true })
+   const updateUser = await UserModel.findByIdAndUpdate(userId, {isAcceptingMessages: acceptMessages}, { new: true })
     
 if (!updateUser) {
     return Response.json(
@@ -30,7 +41,11 @@ if (!updateUser) {
    }
 
    return Response.json(
-        { success: true, message: "Message acceptance status updated successfully", updateUser },
+        { success: true, message: "Message acceptance status updated successfully", 
+        data: {
+          isAcceptingMessages: updateUser.isAcceptingMessages,
+        },
+         },
         { status: 200 }
     );
 
@@ -67,11 +82,14 @@ export async function GET(request: Request) {
     );
    }
    return Response.json(
-        { success: true,
-          isAcceptingMessages: foundUser.isAcceptingMessages   
-         },
-        { status: 200 }
-    );
+  {
+    success: true,
+   data: {
+          isAcceptingMessages: foundUser.isAcceptingMessages, // ✅ DB VALUE
+        },
+  },
+  { status: 200 }
+);
    } catch (error) {
     return Response.json(
         { success: false, message: "Error retrieving user message acceptance status" },

@@ -1,0 +1,16 @@
+[
+    {
+        "title": "Message form User123",
+        "content": "Hey, how are you doing today?",
+        "received" : "10 minutes ago"
+    },
+    {
+        "title": "Message form SecretAdmin",
+        "content": "I really liked your recent post!",
+        "received" : "2 hours ago"
+    },{
+        "title": "Message form MystryGuest",
+        "content": "Do you have any book recommendations?",
+        "received" : "1 day ago"
+    }
+]

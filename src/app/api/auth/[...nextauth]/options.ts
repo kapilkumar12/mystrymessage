@@ -7,10 +7,10 @@ import UserModel from "@/model/User"
 export const authOptions:NextAuthOptions = {
     providers:[
       CredentialsProvider({
-        id:"Credentials",
+        id:"credentials",
         name:"Credentials",
         credentials: {
-      username: { label: "Email", type: "text"},
+      identifier: { label: "Username or Email", type: "text"},
       password: { label: "Password", type: "password" }
     },
 async authorize(credentials:any):Promise<any> {
@@ -40,7 +40,7 @@ if (isPasswordProvider) {
 
 
 } catch (error:any) {
-    throw new Error(error)
+    throw new Error(error.message || "Authentication failed")
 }
 }
       })  

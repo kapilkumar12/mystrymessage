@@ -36,45 +36,44 @@ type MessageCardProps={
 const MessageCard = ({message, onMessageDelete}: MessageCardProps) => {
 
 const handleDeleteConfirm = async () => {
-const response = await axios.delete<ApiResponse>(`/api/delete-messages/${message._id}`)
+const response = await axios.delete<ApiResponse>(`/api/delete-message/${message._id}`)
 toast(response.data.message)
 
 onMessageDelete(message._id.toString())
 }
 
   return (
-  <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
+  <Card className="w-full max-w-sm relative">
+    <CardHeader className='absolute right-8'>
 
-<AlertDialog>
+    <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive"><X className='w-5 h-5'/></Button>
+       <Button size="icon" variant="destructive">
+              <X className="w-4 h-4" />
+            </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
+          This action cannot be undone. This will permanently delete your
             account and remove your data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteConfirm}>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
       </CardHeader>
-      <CardContent>
-
+      <CardContent className='pr-16'>
+        <p className="text-gray-800 whitespace-pre-wrap text-2xl font-semibold">
+          {message.content}
+        </p>
       </CardContent>
-      <CardFooter className="flex-col gap-2">
-
+      <CardFooter className="text-xs text-muted-foreground pr-16">
+        {new Date(message.createdAt).toLocaleString()}
       </CardFooter>
     </Card>
   )

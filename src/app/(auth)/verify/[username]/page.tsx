@@ -23,7 +23,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+// import { Input } from "@/components/ui/input"
 import {
   Card,
   CardContent,
@@ -37,21 +37,25 @@ import { useState } from 'react'
 const page = () => {
 
 const router = useRouter()
-const params = useParams<{username: string}>()
+const params = useParams()
+const username = params.username as string
+
   const [value, setValue] = useState("")
 
 const form = useForm<z.infer<typeof verifySchema>>({
   resolver: zodResolver(verifySchema),
-//   defaultValues: {
-//     identifier: '',
-//     password: ''
-//   }
+  defaultValues: {
+    code: ''
+  }
 })
 
 const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     try {
+
+        // console.log("Submitting:", data)
+
        const response = await axios.post("/api/verify-code", {
-            username: params.username,
+            username: username,
             code: data.code
         })
 
@@ -92,6 +96,7 @@ const onSubmit = async (data: z.infer<typeof verifySchema>) => {
 
             <Controller 
               name="code"
+              defaultValue=""
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className='flex [flex-direction:inherit!] justify-center!'>
@@ -107,19 +112,19 @@ const onSubmit = async (data: z.infer<typeof verifySchema>) => {
                   /> */}
                   <div className='flex [flex-direction:inherit!] justify-center!'>
                   <InputOTP
-                    maxLength={6}
-                    value={field.value}
-                    onChange={field.onChange} 
-                  >
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
+        maxLength={6}
+        value={field.value}
+        onChange={(value) => {
+          field.onChange(value)
+        }}
+        onBlur={field.onBlur}
+      >
+        <InputOTPGroup>
+          {[0,1,2,3,4,5].map((i) => (
+            <InputOTPSlot key={i} index={i} />
+          ))}
+        </InputOTPGroup>
+      </InputOTP>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
