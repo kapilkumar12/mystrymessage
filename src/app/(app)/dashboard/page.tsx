@@ -29,20 +29,12 @@ const page = () => {
 
   const {data:session, status} = useSession();
 
-  // const form = useForm({
-  //   resolver : zodResolver(acceptMessagesSchema)
-  // })
-
-  // const {register, setValue} = form;
-
-  // const acceptMessages = watch('acceptMessages');
 
   const fetchAcceptMessage = useCallback( async () =>{
   setIsSwitchingLoading(true)
   try {   
    
    const response = await axios.get<ApiResponse<AcceptMessagesData & MessagesData>>('/api/accept-messages') 
-  //  setMessages(response.data.data.messages)
    const data = response.data.data;
 
 if (response.data.success && data) {

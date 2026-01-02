@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { MessageInput } from "@/types/SendMessage";
 
 export interface Message extends Document {
   content: string;
@@ -18,7 +19,7 @@ export interface User extends Document {
   verifyCodeExpiry?: Date;
   isVerified: boolean;
   isAcceptingMessages: boolean;
-  messages: Message[];
+  messages: MessageInput[];
 }
 
 const UserSchema: Schema<User> = new Schema({
