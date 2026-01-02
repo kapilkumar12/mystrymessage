@@ -141,8 +141,8 @@ if (result?.url) {
 
         <Field className="w-full">
     <div className="text-center mt-4">
-     <p>Already a member?
-       <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">Sign in</Link>
+     <p>Don’t have an account?
+       <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">Sign up</Link>
        </p>
      </div>
      </Field>
