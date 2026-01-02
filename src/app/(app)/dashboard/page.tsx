@@ -43,7 +43,11 @@ const page = () => {
    
    const response = await axios.get<ApiResponse<AcceptMessagesData & MessagesData>>('/api/accept-messages') 
   //  setMessages(response.data.data.messages)
-   setAcceptMessages(response.data.data.isAcceptingMessages)
+   const data = response.data.data;
+
+if (response.data.success && data) {
+  setAcceptMessages(data.isAcceptingMessages);
+}
 
     } catch (error) {
 
@@ -64,8 +68,11 @@ const page = () => {
   try {     
    const response = await axios.get<ApiResponse<AcceptMessagesData & MessagesData>>('/api/get-messages')
       console.log("API RESPONSE 👉", response.data)
-      setMessages(response.data.data.messages)
-      // setAcceptMessages(response.data.data.isAcceptingMessages)
+      const data = response.data.data;
+
+      if (response.data.success && data) {
+        setMessages(data.messages);
+      }
  
    if(refresh){
     toast("Messages refreshed",{
@@ -105,7 +112,11 @@ const page = () => {
         acceptMessages: checked   
       })
       console.log("response",response)
-     setAcceptMessages(response.data.data.isAcceptingMessages);
+     const data = response.data.data;
+
+      if (response.data.success && data) {
+        setAcceptMessages(data.isAcceptingMessages);
+      }
       toast.success(response.data.message, {
         description: "Accept messages setting updated"
       })
